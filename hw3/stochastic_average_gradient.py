@@ -8,7 +8,7 @@ from losses import (square_loss, square_loss_gradient,
 
 # SGD (sampling with replacement) vs SGA
 def plot(Xtrain, ytrain, Xtest, ytest, loss_name, mu):
-    step = 0.01
+    step = 0.005
     iterations = 50
 
     if loss_name == 'square':
@@ -28,18 +28,9 @@ def plot(Xtrain, ytrain, Xtest, ytest, loss_name, mu):
     for it in range(iterations):
         for i in range(n):
             choose = random.randint(0,n - 1)
-            #print Xtrain[choose, :], ytrain[choose]
             g = gradf(Xtrain[choose, :][np.newaxis, :], ytrain[choose], theta, mu)
             sumy[:, 0] += g[:, 0] - y[choose, :]
             y[choose, :] = g[:, 0]
-            #g[:, 0] -= y[choose, :]
-            #print g#sumy, theta
-            #print g.shape
-            #print y[choose, :].shape
-            #print (g - y[choose, :]).shape
-            #print sumy.shape
-            #print sumy
-            #assert False
             theta -= step * sumy / n
 
             m = it * n + i + 1
@@ -63,10 +54,17 @@ def plot(Xtrain, ytrain, Xtest, ytest, loss_name, mu):
     interval = [100 * x for x in interval]
 
     plt.figure(1)
-    plt.plot(interval, loss_test_sag, 'b', interval, loss_test_sampling, 'r')
+    plt.plot(interval, loss_test_sampling)
+    plt.title('SGD')
     plt.ylabel('loss')
     plt.xlabel('iteration')
-    plt.legend(['SAG', 'SGD with sampling'], loc='upper left')
+
+    plt.figure(2)
+    plt.plot(interval, loss_test_sag)
+    plt.title('SAG')
+    plt.ylabel('loss')
+    plt.xlabel('iteration')
+
     plt.show()
 
 if __name__ == '__main__':
